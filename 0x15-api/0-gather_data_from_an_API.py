@@ -1,14 +1,24 @@
 #!/usr/bin/python3
-"""Returns to-do list information for a given employee ID."""
-import requests
-import sys
+"""gathers data from an API"""
+
 
 if __name__ == "__main__":
-    url = "https://jsonplaceholder.typicode.com/"
-    user = requests.get(url + "users/{}".format(sys.argv[1])).json()
-    todos = requests.get(url + "todos", params={"userId": sys.argv[1]}).json()
+    import requests
+    import sys
 
-    completed = [t.get("title") for t in todos if t.get("completed") is True]
-    print("Employee {} is done with tasks({}/{}):".format(
-        user.get("name"), len(completed), len(todos)))
-    [print("\t {}".format(c)) for c in completed]
+    user_req = requests.get("https://jsonplaceholder.typicode.com/users/{}".
+                            format(sys.argv[1]))
+    user_name = user_req.json().get("name")
+    tasks_req = requests.get("https://jsonplaceholder.typicode.com/todos")
+    total_tasks = 0
+    cmp_tasks = 0
+    cmp_tasks_desc = ""
+    for each in tasks_req.json():
+        if each["userId"] == int(sys.argv[1]):
+            total_tasks += 1
+            if each["completed"] is True:
+                cmp_tasks += 1
+                cmp_tasks_desc += "\t {}\n".format(each["title"])
+    print("Employee {} is done with tasks({}/{}):".
+          format(user_name, cmp_tasks, total_tasks))
+    print(cmp_tasks_desc, end="")
