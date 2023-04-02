@@ -1,1 +1,2 @@
-new reaadme
+#!/bin/bash
+shell variables and expansions
